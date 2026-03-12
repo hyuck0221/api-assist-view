@@ -19,6 +19,7 @@ export function Sidebar({ open, onToggle }: SidebarProps) {
 
   const isApiDocsPage = location.pathname === '/api-docs'
   const isLogsPage = location.pathname === '/logs'
+  const isSettingsPage = location.pathname === '/settings'
   const isSingleSelect = isApiDocsPage || isLogsPage
 
   const enabledSources = sources.filter(s => {
@@ -100,7 +101,7 @@ export function Sidebar({ open, onToggle }: SidebarProps) {
       <div className="border-t border-gray-200 dark:border-gray-800 my-2" />
 
       {/* Sources section */}
-      {open && (
+      {open && !isSettingsPage && (
         <div className="flex-1 overflow-y-auto px-2 pb-2">
           <div className="flex items-center justify-between px-2 mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">
