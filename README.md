@@ -1,7 +1,7 @@
 # api-assist-view
 
 A multi-source API log viewer built with **Vite + React + TypeScript + TailwindCSS**.
-Companion frontend for the [apilog](https://github.com/hyuck0221/apilog) Spring Boot / Kotlin library.
+Companion frontend for the [apilog](https://github.com/hyuck0221/spring-api-assist) Spring Boot / Kotlin library.
 
 [한국어](./README-ko.md)
 
