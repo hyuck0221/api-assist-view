@@ -223,14 +223,18 @@ function LogRow({
       </td>
       {/* Duration */}
       <td className="px-3 py-2 whitespace-nowrap overflow-hidden text-right">
-        <span className={clsx(
-          'font-mono text-xs',
-          entry.processingTimeMs > 1000 ? 'text-red-600 dark:text-red-400 font-semibold'
-            : entry.processingTimeMs > 500 ? 'text-amber-600 dark:text-amber-400'
-              : 'text-gray-600 dark:text-gray-400'
-        )}>
-          {entry.processingTimeMs.toLocaleString()} ms
-        </span>
+        {entry.processingTimeMs == null ? (
+          <span className="font-mono text-xs text-gray-400">-</span>
+        ) : (
+          <span className={clsx(
+            'font-mono text-xs',
+            entry.processingTimeMs > 1000 ? 'text-red-600 dark:text-red-400 font-semibold'
+              : entry.processingTimeMs > 500 ? 'text-amber-600 dark:text-amber-400'
+                : 'text-gray-600 dark:text-gray-400'
+          )}>
+            {entry.processingTimeMs.toLocaleString()} ms
+          </span>
+        )}
       </td>
       {/* Remote IP */}
       <td className="px-3 py-2 overflow-hidden font-mono text-xs text-gray-500 dark:text-gray-500">

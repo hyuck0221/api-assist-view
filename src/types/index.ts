@@ -13,7 +13,7 @@ export interface ApiLogEntry {
   responseBody: string | null
   requestTime: string   // ISO 8601
   responseTime: string  // ISO 8601
-  processingTimeMs: number
+  processingTimeMs: number | null
   serverName: string | null
   serverPort: number | null
   remoteAddr: string | null

@@ -167,7 +167,7 @@ export function filterAndPage(
     filtered = filtered.filter(e => new Date(e.requestTime).getTime() <= t)
   }
   if (filters.minProcessingTimeMs !== undefined) {
-    filtered = filtered.filter(e => e.processingTimeMs >= filters.minProcessingTimeMs!)
+    filtered = filtered.filter(e => (e.processingTimeMs ?? 0) >= filters.minProcessingTimeMs!)
   }
   if (filters.remoteAddr) {
     const r = filters.remoteAddr.toLowerCase()

@@ -123,7 +123,7 @@ export async function fetchSupabaseS3Stats(source: SupabaseS3Source): Promise<Ap
     return { totalCount: 0, avgProcessingTimeMs: 0, maxProcessingTimeMs: 0, p99ProcessingTimeMs: 0, countByStatus: {}, countByMethod: {}, countByAppName: {} }
   }
 
-  const times = entries.map(e => e.processingTimeMs).sort((a, b) => a - b)
+  const times = entries.map(e => e.processingTimeMs ?? 0).sort((a, b) => a - b)
   const avgProcessingTimeMs = times.reduce((s, v) => s + v, 0) / totalCount
   const maxProcessingTimeMs = times[times.length - 1] ?? 0
   const p99Index = Math.floor(totalCount * 0.99)

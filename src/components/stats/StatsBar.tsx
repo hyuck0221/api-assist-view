@@ -50,14 +50,18 @@ function SourceStatsCards({
   }
 
   // Derive error rate from countByStatus
-  const errorCount = Object.entries(stats.countByStatus)
+  const errorCount = Object.entries(stats.countByStatus ?? {})
     .filter(([code]) => Number(code) >= 400)
     .reduce((sum, [, n]) => sum + n, 0)
-  const errorRate = stats.totalCount > 0 ? (errorCount / stats.totalCount) * 100 : 0
+  const totalCount = stats.totalCount ?? 0
+  const errorRate = totalCount > 0 ? (errorCount / totalCount) * 100 : 0
 
   // Top method
-  const topMethod = Object.entries(stats.countByMethod)
+  const topMethod = Object.entries(stats.countByMethod ?? {})
     .sort((a, b) => b[1] - a[1])[0]?.[0] ?? '-'
+
+  const avgMs = stats.avgProcessingTimeMs ?? 0
+  const p99Ms = stats.p99ProcessingTimeMs ?? 0
 
   return (
     <div className="card flex items-center gap-4 px-4 py-3 text-sm overflow-x-auto relative">
@@ -69,7 +73,7 @@ function SourceStatsCards({
         )}
       </span>
 
-      <StatItem icon={Activity} label={t('stats.total')} value={stats.totalCount.toLocaleString()} />
+      <StatItem icon={Activity} label={t('stats.total')} value={totalCount.toLocaleString()} />
 
       <StatItem
         icon={BarChart2}
@@ -82,15 +86,15 @@ function SourceStatsCards({
         }
       />
 
-      <StatItem icon={Clock} label={t('stats.avg')} value={`${Math.round(stats.avgProcessingTimeMs)} ms`} />
+      <StatItem icon={Clock} label={t('stats.avg')} value={`${Math.round(avgMs)} ms`} />
 
       <StatItem
         icon={Zap}
         label={t('stats.p99')}
-        value={`${stats.p99ProcessingTimeMs} ms`}
+        value={`${p99Ms} ms`}
         valueClass={
-          stats.p99ProcessingTimeMs > 1000 ? 'text-red-600 dark:text-red-400' :
-          stats.p99ProcessingTimeMs > 300  ? 'text-amber-600 dark:text-amber-400' :
+          p99Ms > 1000 ? 'text-red-600 dark:text-red-400' :
+          p99Ms > 300  ? 'text-amber-600 dark:text-amber-400' :
           undefined
         }
       />

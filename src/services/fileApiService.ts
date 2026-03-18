@@ -215,7 +215,7 @@ export async function fetchFileApiStats(source: FileSource, refreshTick = 0): Pr
   const entries = await loadAllEntries(source, refreshTick)
 
   const totalCount = entries.length
-  const times = entries.map(e => e.processingTimeMs).sort((a, b) => a - b)
+  const times = entries.map(e => e.processingTimeMs ?? 0).sort((a, b) => a - b)
   const avgProcessingTimeMs = totalCount > 0
     ? Math.round(times.reduce((s, v) => s + v, 0) / totalCount)
     : 0

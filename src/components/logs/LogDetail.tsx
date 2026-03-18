@@ -53,9 +53,11 @@ export function LogDetail({ entry, onClose }: LogDetailProps) {
             {entry.requestTime ? format(new Date(entry.requestTime), 'yyyy-MM-dd HH:mm:ss.SSS') : '-'}
           </MetaCard>
           <MetaCard icon={Cpu} label={t('detail.processingTime')}>
-            <span className={entry.processingTimeMs > 1000 ? 'text-red-600 dark:text-red-400 font-semibold' : ''}>
-              {entry.processingTimeMs.toLocaleString()} ms
-            </span>
+            {entry.processingTimeMs == null ? '-' : (
+              <span className={entry.processingTimeMs > 1000 ? 'text-red-600 dark:text-red-400 font-semibold' : ''}>
+                {entry.processingTimeMs.toLocaleString()} ms
+              </span>
+            )}
           </MetaCard>
           <MetaCard icon={Globe} label={t('detail.remoteAddr')}>
             {entry.remoteAddr ?? '-'}
