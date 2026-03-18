@@ -246,8 +246,8 @@ export function SettingsPage() {
             </div>
             <h3 className="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider px-1 pt-2">MCP</h3>
             <div className="space-y-2">
-              <ApiEndpointItem method="GET" path="/mcp/sse" label={t('settings.apiRef.mcpSse')} />
               <ApiEndpointItem method="POST" path="/mcp" label={t('settings.apiRef.mcpHttp')} />
+              <ApiEndpointItem method="GET" path="/mcp/sse" label={t('settings.apiRef.mcpSse')} />
             </div>
           </div>
         </div>
@@ -336,10 +336,10 @@ function McpGuideSection() {
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400">{t('settings.mcpGuide.cursor.desc')}</p>
           <div className="space-y-2">
-            <p className="text-[11px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider">{t('settings.mcpGuide.sseLabel')}</p>
-            <pre className="text-xs bg-gray-900 dark:bg-gray-950 text-green-400 rounded-lg p-3 overflow-x-auto leading-relaxed">{cursorSseConfig}</pre>
             <p className="text-[11px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider">{t('settings.mcpGuide.httpLabel')}</p>
             <pre className="text-xs bg-gray-900 dark:bg-gray-950 text-green-400 rounded-lg p-3 overflow-x-auto leading-relaxed">{cursorHttpConfig}</pre>
+            <p className="text-[11px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider">{t('settings.mcpGuide.sseLabel')}</p>
+            <pre className="text-xs bg-gray-900 dark:bg-gray-950 text-green-400 rounded-lg p-3 overflow-x-auto leading-relaxed">{cursorSseConfig}</pre>
           </div>
         </div>
 
@@ -350,10 +350,10 @@ function McpGuideSection() {
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400">{t('settings.mcpGuide.claudeCode.desc')}</p>
           <div className="space-y-2">
-            <p className="text-[11px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider">{t('settings.mcpGuide.sseLabel')}</p>
-            <pre className="text-xs bg-gray-900 dark:bg-gray-950 text-green-400 rounded-lg p-3 overflow-x-auto leading-relaxed">{claudeSseCmd}</pre>
             <p className="text-[11px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider">{t('settings.mcpGuide.httpLabel')}</p>
             <pre className="text-xs bg-gray-900 dark:bg-gray-950 text-green-400 rounded-lg p-3 overflow-x-auto leading-relaxed">{claudeHttpCmd}</pre>
+            <p className="text-[11px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider">{t('settings.mcpGuide.sseLabel')}</p>
+            <pre className="text-xs bg-gray-900 dark:bg-gray-950 text-green-400 rounded-lg p-3 overflow-x-auto leading-relaxed">{claudeSseCmd}</pre>
           </div>
         </div>
       </div>

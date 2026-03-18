@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Search, ChevronDown, ChevronUp, RotateCcw, SlidersHorizontal, RefreshCw } from 'lucide-react'
 import { useFilterStore } from '../../stores/filterStore'
 import { useAppNames } from '../../hooks/useAppNames'
@@ -24,6 +24,41 @@ export function LogFilters() {
   const { filters, setFilters, resetFilters, autoRefreshInterval, setAutoRefreshInterval, triggerRefresh } = useFilterStore()
   const [expanded, setExpanded] = useState(false)
   const { data: appNames = [] } = useAppNames()
+
+  // Local state for debounced text inputs
+  const [localUrl, setLocalUrl] = useState(filters.url ?? '')
+  const [localMinDuration, setLocalMinDuration] = useState(
+    filters.minProcessingTimeMs !== undefined ? String(filters.minProcessingTimeMs) : ''
+  )
+  const [localRemoteAddr, setLocalRemoteAddr] = useState(filters.remoteAddr ?? '')
+  const [localServerName, setLocalServerName] = useState(filters.serverName ?? '')
+
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      setFilters({
+        url: localUrl || undefined,
+        minProcessingTimeMs: localMinDuration ? Number(localMinDuration) : undefined,
+        remoteAddr: localRemoteAddr || undefined,
+        serverName: localServerName || undefined,
+      })
+    }, 500)
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localUrl, localMinDuration, localRemoteAddr, localServerName])
+
+  function handleReset() {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    setLocalUrl('')
+    setLocalMinDuration('')
+    setLocalRemoteAddr('')
+    setLocalServerName('')
+    resetFilters()
+  }
 
   const statusOptions = [
     { label: t('filters.statusAll'), value: '' },
@@ -58,8 +93,8 @@ export function LogFilters() {
             type="text"
             placeholder={t('filters.urlPlaceholder')}
             className="input pl-9"
-            value={filters.url ?? ''}
-            onChange={e => setFilters({ url: e.target.value || undefined })}
+            value={localUrl}
+            onChange={e => setLocalUrl(e.target.value)}
           />
         </div>
 
@@ -109,7 +144,7 @@ export function LogFilters() {
         </button>
 
         {activeFilterCount > 0 && (
-          <button onClick={resetFilters} className="btn-ghost gap-1">
+          <button onClick={handleReset} className="btn-ghost gap-1">
             <RotateCcw className="w-3.5 h-3.5" />
             {t('filters.reset')}
           </button>
@@ -170,8 +205,8 @@ export function LogFilters() {
               min={0}
               placeholder="0"
               className="input"
-              value={filters.minProcessingTimeMs ?? ''}
-              onChange={e => setFilters({ minProcessingTimeMs: e.target.value ? Number(e.target.value) : undefined })}
+              value={localMinDuration}
+              onChange={e => setLocalMinDuration(e.target.value)}
             />
           </div>
           <div>
@@ -196,8 +231,8 @@ export function LogFilters() {
               type="text"
               placeholder={t('filters.remoteIpPlaceholder')}
               className="input"
-              value={filters.remoteAddr ?? ''}
-              onChange={e => setFilters({ remoteAddr: e.target.value || undefined })}
+              value={localRemoteAddr}
+              onChange={e => setLocalRemoteAddr(e.target.value)}
             />
           </div>
           <div>
@@ -206,8 +241,8 @@ export function LogFilters() {
               type="text"
               placeholder={t('filters.serverNamePlaceholder')}
               className="input"
-              value={filters.serverName ?? ''}
-              onChange={e => setFilters({ serverName: e.target.value || undefined })}
+              value={localServerName}
+              onChange={e => setLocalServerName(e.target.value)}
             />
           </div>
         </div>

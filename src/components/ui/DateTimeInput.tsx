@@ -12,7 +12,7 @@ interface DateTimeInputProps {
 
 export function DateTimeInput({ value, onChange, placeholder = 'Pick date & time' }: DateTimeInputProps) {
   const [open, setOpen] = useState(false)
-  const [timeStr, setTimeStr] = useState('00:00')
+  const [timeStr, setTimeStr] = useState('00:00:00')
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Parse current value
@@ -26,7 +26,7 @@ export function DateTimeInput({ value, onChange, placeholder = 'Pick date & time
   // Sync timeStr when value changes externally
   useEffect(() => {
     if (selectedDate) {
-      setTimeStr(format(selectedDate, 'HH:mm'))
+      setTimeStr(format(selectedDate, 'HH:mm:ss'))
     }
   }, [value])
 
@@ -43,33 +43,34 @@ export function DateTimeInput({ value, onChange, placeholder = 'Pick date & time
 
   function handleDaySelect(day: Date | undefined) {
     if (!day) return
-    const [hh = '00', mm = '00'] = timeStr.split(':')
-    day.setHours(Number(hh), Number(mm), 0, 0)
+    const [hh = '00', mm = '00', ss = '00'] = timeStr.split(':')
+    day.setHours(Number(hh), Number(mm), Number(ss), 0)
     onChange(day.toISOString())
   }
 
   function handleTimeChange(t: string) {
     setTimeStr(t)
     if (selectedDate) {
-      const [hh = '00', mm = '00'] = t.split(':')
+      const [hh = '00', mm = '00', ss = '00'] = t.split(':')
       const next = new Date(selectedDate)
-      next.setHours(Number(hh), Number(mm), 0, 0)
+      next.setHours(Number(hh), Number(mm), Number(ss), 0)
       onChange(next.toISOString())
     }
   }
 
   function handleManualInput(raw: string) {
     if (!raw) { onChange(undefined); return }
-    // accept "YYYY-MM-DDTHH:mm" or "YYYY-MM-DD HH:mm"
+    // accept "YYYY-MM-DDTHH:mm:ss", "YYYY-MM-DD HH:mm:ss", "YYYY-MM-DDTHH:mm", "YYYY-MM-DD HH:mm"
     const normalized = raw.replace(' ', 'T')
-    const d = parse(normalized, "yyyy-MM-dd'T'HH:mm", new Date())
+    const withSec = parse(normalized, "yyyy-MM-dd'T'HH:mm:ss", new Date())
+    const d = isValid(withSec) ? withSec : parse(normalized, "yyyy-MM-dd'T'HH:mm", new Date())
     if (isValid(d)) {
       onChange(d.toISOString())
-      setTimeStr(format(d, 'HH:mm'))
+      setTimeStr(format(d, 'HH:mm:ss'))
     }
   }
 
-  const displayValue = selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm') : ''
+  const displayValue = selectedDate ? format(selectedDate, 'yyyy-MM-dd HH:mm:ss') : ''
 
   return (
     <div ref={containerRef} className="relative">
@@ -145,6 +146,7 @@ export function DateTimeInput({ value, onChange, placeholder = 'Pick date & time
             <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">Time</span>
             <input
               type="time"
+              step="1"
               value={timeStr}
               onChange={e => handleTimeChange(e.target.value)}
               className={clsx(

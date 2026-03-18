@@ -55,6 +55,7 @@ export function SourceForm({ existing, onDone }: SourceFormProps) {
   const apiDocs = existing as ApiDocsSource | undefined
   const [apiDocsBaseUrl, setApiDocsBaseUrl] = useState(apiDocs?.baseUrl ?? '')
   const [apiDocsBasePath, setApiDocsBasePath] = useState(apiDocs?.basePath ?? '/api/documents')
+  const [apiDocsApiKey, setApiDocsApiKey] = useState(apiDocs?.apiKey ?? '')
 
   // Local File fields
   const file = existing as FileSource | undefined
@@ -80,7 +81,7 @@ export function SourceForm({ existing, onDone }: SourceFormProps) {
       case 'api':
         return { ...base, type: 'api', baseUrl: apiBaseUrl, basePath: apiBasePath || '/api/logs', apiKey: apiKey || undefined } as Omit<ApiSource, 'id' | 'color'>
       case 'api-docs':
-        return { ...base, type: 'api-docs', baseUrl: apiDocsBaseUrl, basePath: apiDocsBasePath || '/api/documents' } as Omit<ApiDocsSource, 'id' | 'color'>
+        return { ...base, type: 'api-docs', baseUrl: apiDocsBaseUrl, basePath: apiDocsBasePath || '/api/documents', apiKey: apiDocsApiKey || undefined } as Omit<ApiDocsSource, 'id' | 'color'>
       case 'file':
         return {
           ...base,
@@ -114,7 +115,8 @@ export function SourceForm({ existing, onDone }: SourceFormProps) {
       setTestState('ok')
     } catch (e) {
       setTestState('error')
-      setTestError(e instanceof Error ? e.message : String(e))
+      const msg = e instanceof Error ? e.message : String(e)
+      setTestError(msg.startsWith('HTTP 401') ? t('sourceForm.error.unauthorized') : msg)
     }
   }
 
@@ -303,6 +305,11 @@ export function SourceForm({ existing, onDone }: SourceFormProps) {
           <p className="text-xs text-gray-500 dark:text-gray-400 -mt-3">
             {t('sourceForm.apiDocsEndpointHint', apiDocsBaseUrl, apiDocsBasePath)}
           </p>
+          <div>
+            <label className="label">{t('sourceForm.field.apiKey')}</label>
+            <input type="password" className="input" placeholder={t('sourceForm.field.apiKeyPlaceholder')}
+              value={apiDocsApiKey} onChange={e => setApiDocsApiKey(e.target.value)} />
+          </div>
         </>
       )}
 

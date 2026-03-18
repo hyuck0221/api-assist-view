@@ -48,6 +48,12 @@ function toSortByParam(field: keyof ApiLogEntry): string {
   return SORT_FIELD_MAP[field] ?? 'request_time'
 }
 
+function toLocalDateTimeParam(iso: string): string {
+  const d = new Date(iso)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+}
+
 function buildHeaders(source: ApiSource): HeadersInit {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -71,7 +77,8 @@ async function apiFetch<T>(source: ApiSource, path: string, params?: Record<stri
       if (v !== undefined && v !== null && v !== '') url.searchParams.set(k, v)
     })
   }
-  const res = await fetch(url.toString(), { headers: buildHeaders(source) })
+  // URLSearchParams encodes spaces as '+'; replace with '%20' for server compatibility
+  const res = await fetch(url.toString().replace(/\+/g, '%20'), { headers: buildHeaders(source) })
   if (!res.ok) {
     const text = await res.text().catch(() => '')
     throw new Error(`HTTP ${res.status}: ${text || res.statusText}`)
@@ -105,8 +112,10 @@ export async function fetchApiLogs(
   if (filters.url)                 params['url'] = filters.url
   if (filters.method)              params['method'] = filters.method
   if (filters.statusCode)          params['statusCode'] = filters.statusCode
-  if (filters.startTime)           params['startTime'] = filters.startTime
-  if (filters.endTime)             params['endTime'] = filters.endTime
+  if (filters.startTime)           params['startTime'] = toLocalDateTimeParam(filters.startTime)
+  if (filters.endTime)             params['endTime'] = toLocalDateTimeParam(filters.endTime)
+  if (filters.remoteAddr)          params['remoteAddr'] = filters.remoteAddr
+  if (filters.serverName)          params['serverName'] = filters.serverName
   if (filters.minProcessingTimeMs !== undefined) params['minProcessingTimeMs'] = String(filters.minProcessingTimeMs)
 
   const spring = await apiFetch<SpringPage<ApiLogEntry>>(source, '', params)
@@ -129,8 +138,8 @@ export async function fetchApiStats(
   endTime?: string,
 ): Promise<ApiLogStats> {
   const params: Record<string, string> = {}
-  if (startTime) params['startTime'] = startTime
-  if (endTime)   params['endTime'] = endTime
+  if (startTime) params['startTime'] = toLocalDateTimeParam(startTime)
+  if (endTime)   params['endTime'] = toLocalDateTimeParam(endTime)
   return apiFetch<ApiLogStats>(source, '/stats', params)
 }
 

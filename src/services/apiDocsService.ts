@@ -27,6 +27,12 @@ function resolveUrl(source: ApiDocsSource, path: string): string {
   return `${base}${bp}${path}`
 }
 
+function buildHeaders(source: ApiDocsSource): HeadersInit {
+  const headers: Record<string, string> = { Accept: 'application/json' }
+  if (source.apiKey) headers['X-Api-Key'] = source.apiKey
+  return headers
+}
+
 async function docsFetch<T>(source: ApiDocsSource, path: string, params?: Record<string, string>): Promise<T> {
   const url = new URL(resolveUrl(source, path))
   if (params) {
@@ -35,7 +41,7 @@ async function docsFetch<T>(source: ApiDocsSource, path: string, params?: Record
     })
   }
   const res = await fetch(url.toString(), {
-    headers: { Accept: 'application/json' },
+    headers: buildHeaders(source),
   })
   if (!res.ok) {
     const text = await res.text().catch(() => '')

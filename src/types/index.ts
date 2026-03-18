@@ -136,6 +136,7 @@ export interface ApiDocsSource extends BaseSource {
   type: 'api-docs'
   baseUrl: string   // e.g., http://localhost:8080
   basePath: string  // e.g., /api (default)
+  apiKey?: string   // sent as X-Api-Key header
 }
 
 // ─── API Doc entry (returned by GET {basePath}/document) ─────────────────────

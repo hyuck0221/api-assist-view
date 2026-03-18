@@ -102,6 +102,7 @@ const en = {
   'sourceForm.testConnection': 'Test Connection',
   'sourceForm.testing': 'Testing…',
   'sourceForm.connectedOk': 'Connected successfully',
+  'sourceForm.error.unauthorized': 'API key authentication is required (HTTP 401). Please set an API key for this source.',
   'sourceForm.addSource': 'Add Source',
   'sourceForm.saveChanges': 'Save Changes',
 
@@ -219,8 +220,8 @@ const en = {
   'settings.mcpGuide.cursor.desc': 'Add to your project\'s .cursor/mcp.json or Cursor global MCP settings.',
   'settings.mcpGuide.claudeCode.title': 'Claude Code',
   'settings.mcpGuide.claudeCode.desc': 'Run the following command in your terminal.',
-  'settings.mcpGuide.sseLabel': 'SSE (recommended)',
-  'settings.mcpGuide.httpLabel': 'HTTP Streaming',
+  'settings.mcpGuide.httpLabel': 'HTTP Streaming (recommended)',
+  'settings.mcpGuide.sseLabel': 'SSE',
 
   'settings.import.title': 'Import Sources',
   'settings.import.totalInFile': 'Total in file',
@@ -341,6 +342,7 @@ const ko: typeof en = {
   'sourceForm.testConnection': '연결 테스트',
   'sourceForm.testing': '테스트 중…',
   'sourceForm.connectedOk': '연결 성공',
+  'sourceForm.error.unauthorized': 'API 키 인증이 필요합니다 (HTTP 401). 소스에 API 키를 설정해 주세요.',
   'sourceForm.addSource': '소스 추가',
   'sourceForm.saveChanges': '저장',
 
@@ -458,8 +460,8 @@ const ko: typeof en = {
   'settings.mcpGuide.cursor.desc': '프로젝트의 .cursor/mcp.json 또는 Cursor 전역 MCP 설정에 추가하세요.',
   'settings.mcpGuide.claudeCode.title': 'Claude Code',
   'settings.mcpGuide.claudeCode.desc': '터미널에서 아래 명령어를 실행하세요.',
-  'settings.mcpGuide.sseLabel': 'SSE (권장)',
-  'settings.mcpGuide.httpLabel': 'HTTP Streaming',
+  'settings.mcpGuide.httpLabel': 'HTTP Streaming (권장)',
+  'settings.mcpGuide.sseLabel': 'SSE',
 
   'settings.import.title': '소스 가져오기',
   'settings.import.totalInFile': '파일 내 총 소스',
