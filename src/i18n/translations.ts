@@ -103,6 +103,9 @@ const en = {
   'sourceForm.testing': 'Testing…',
   'sourceForm.connectedOk': 'Connected successfully',
   'sourceForm.error.unauthorized': 'API key authentication is required (HTTP 401). Please set an API key for this source.',
+  'sourceForm.error.invalidApiKey': 'The API key is invalid. Please check your API key.',
+  'sourceForm.error.connectionFailed': 'Failed to connect to the server. Please check the URL and server status.',
+  'sourceForm.error.connectionFailedWithKey': 'Failed to connect to the server. Please check the CORS configuration or your API key.',
   'sourceForm.addSource': 'Add Source',
   'sourceForm.saveChanges': 'Save Changes',
 
@@ -343,6 +346,9 @@ const ko: typeof en = {
   'sourceForm.testing': '테스트 중…',
   'sourceForm.connectedOk': '연결 성공',
   'sourceForm.error.unauthorized': 'API 키 인증이 필요합니다 (HTTP 401). 소스에 API 키를 설정해 주세요.',
+  'sourceForm.error.invalidApiKey': '인증키가 올바르지 않습니다. API 키를 확인해 주세요.',
+  'sourceForm.error.connectionFailed': '서버에 연결할 수 없습니다. URL과 서버 상태를 확인해 주세요.',
+  'sourceForm.error.connectionFailedWithKey': '서버에 연결할 수 없습니다. CORS 설정 또는 API 키를 확인해 주세요.',
   'sourceForm.addSource': '소스 추가',
   'sourceForm.saveChanges': '저장',
 

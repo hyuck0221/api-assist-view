@@ -81,7 +81,9 @@ async function apiFetch<T>(source: ApiSource, path: string, params?: Record<stri
   const res = await fetch(url.toString().replace(/\+/g, '%20'), { headers: buildHeaders(source) })
   if (!res.ok) {
     const text = await res.text().catch(() => '')
-    throw new Error(`HTTP ${res.status}: ${text || res.statusText}`)
+    const err = new Error(`HTTP ${res.status}: ${text || res.statusText}`) as Error & { status: number }
+    err.status = res.status
+    throw err
   }
   return res.json() as Promise<T>
 }

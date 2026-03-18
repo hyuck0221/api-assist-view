@@ -67,7 +67,9 @@ async function listFiles(source: FileSource): Promise<FileEntry[]> {
   const res = await fetch(url.toString(), { headers: buildHeaders(source) })
   if (!res.ok) {
     const text = await res.text().catch(() => '')
-    throw new Error(`HTTP ${res.status}: ${text || res.statusText}`)
+    const err = new Error(`HTTP ${res.status}: ${text || res.statusText}`) as Error & { status: number }
+    err.status = res.status
+    throw err
   }
   return res.json() as Promise<FileEntry[]>
 }
@@ -83,7 +85,9 @@ async function downloadFileContent(source: FileSource, filePath: string): Promis
   })
   if (!res.ok) {
     const text = await res.text().catch(() => '')
-    throw new Error(`HTTP ${res.status}: ${text || res.statusText}`)
+    const err = new Error(`HTTP ${res.status}: ${text || res.statusText}`) as Error & { status: number }
+    err.status = res.status
+    throw err
   }
   return res.text()
 }

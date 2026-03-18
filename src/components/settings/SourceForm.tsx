@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Loader2, CheckCircle, AlertCircle } from 'lucide-react'
+import { Loader2, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react'
 import clsx from 'clsx'
 import type { LogSource, SourceType, SupabaseSource, SupabaseS3Source, ApiSource, FileSource, ApiDocsSource } from '../../types'
 import { useSourceStore } from '../../stores/sourceStore'
@@ -66,6 +66,8 @@ export function SourceForm({ existing, onDone }: SourceFormProps) {
   const [fileFormat, setFileFormat] = useState<'json' | 'csv'>(file?.format ?? 'json')
   const [fileMaxFiles, setFileMaxFiles] = useState(file?.maxFiles ?? 5)
 
+  const [showApiKey, setShowApiKey] = useState(false)
+
   const [testState, setTestState] = useState<TestState>('idle')
   const [testError, setTestError] = useState('')
 
@@ -115,8 +117,27 @@ export function SourceForm({ existing, onDone }: SourceFormProps) {
       setTestState('ok')
     } catch (e) {
       setTestState('error')
-      const msg = e instanceof Error ? e.message : String(e)
-      setTestError(msg.startsWith('HTTP 401') ? t('sourceForm.error.unauthorized') : msg)
+      const status = (e as { status?: number }).status
+      const is401 = status === 401 || (e instanceof Error && e.message.startsWith('HTTP 401'))
+      const currentApiKey = type === 'api' ? apiKey : type === 'api-docs' ? apiDocsApiKey : type === 'file' ? fileApiKey : ''
+
+      if (is401) {
+        setTestError(t(currentApiKey ? 'sourceForm.error.invalidApiKey' : 'sourceForm.error.unauthorized'))
+      } else if (e instanceof TypeError) {
+        // ERR_CONNECTION_REFUSED vs CORS preflight 401 are both TypeError.
+        // Use a no-cors probe: succeeds (opaque response) if server is reachable, throws if not.
+        const baseUrl = type === 'api' ? apiBaseUrl : type === 'api-docs' ? apiDocsBaseUrl : type === 'file' ? fileBaseUrl : ''
+        try {
+          await fetch(baseUrl, { method: 'HEAD', mode: 'no-cors' })
+          // Server reachable → CORS preflight was blocked (likely 401)
+          setTestError(t(currentApiKey ? 'sourceForm.error.invalidApiKey' : 'sourceForm.error.unauthorized'))
+        } catch {
+          // Server genuinely unreachable
+          setTestError(t('sourceForm.error.connectionFailed'))
+        }
+      } else {
+        setTestError(t('sourceForm.error.connectionFailed'))
+      }
     }
   }
 
@@ -281,8 +302,14 @@ export function SourceForm({ existing, onDone }: SourceFormProps) {
               {t('sourceForm.field.apiKey')}{' '}
               <span className="font-normal text-gray-400">{t('sourceForm.field.apiKeyOptional')}</span>
             </label>
-            <input type="password" className="input" placeholder={t('sourceForm.field.apiKeyPlaceholder')}
-              value={apiKey} onChange={e => setApiKey(e.target.value)} />
+            <div className="relative">
+              <input type={showApiKey ? 'text' : 'password'} className="input pr-9" placeholder={t('sourceForm.field.apiKeyPlaceholder')}
+                value={apiKey} onChange={e => setApiKey(e.target.value)} />
+              <button type="button" onClick={() => setShowApiKey(v => !v)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
         </>
       )}
@@ -307,8 +334,14 @@ export function SourceForm({ existing, onDone }: SourceFormProps) {
           </p>
           <div>
             <label className="label">{t('sourceForm.field.apiKey')}</label>
-            <input type="password" className="input" placeholder={t('sourceForm.field.apiKeyPlaceholder')}
-              value={apiDocsApiKey} onChange={e => setApiDocsApiKey(e.target.value)} />
+            <div className="relative">
+              <input type={showApiKey ? 'text' : 'password'} className="input pr-9" placeholder={t('sourceForm.field.apiKeyPlaceholder')}
+                value={apiDocsApiKey} onChange={e => setApiDocsApiKey(e.target.value)} />
+              <button type="button" onClick={() => setShowApiKey(v => !v)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
         </>
       )}
@@ -337,8 +370,14 @@ export function SourceForm({ existing, onDone }: SourceFormProps) {
               {t('sourceForm.field.apiKey')}{' '}
               <span className="font-normal text-gray-400">{t('sourceForm.field.apiKeyOptional')}</span>
             </label>
-            <input type="password" className="input" placeholder={t('sourceForm.field.apiKeyPlaceholder')}
-              value={fileApiKey} onChange={e => setFileApiKey(e.target.value)} />
+            <div className="relative">
+              <input type={showApiKey ? 'text' : 'password'} className="input pr-9" placeholder={t('sourceForm.field.apiKeyPlaceholder')}
+                value={fileApiKey} onChange={e => setFileApiKey(e.target.value)} />
+              <button type="button" onClick={() => setShowApiKey(v => !v)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
 
           {/* File listing options */}
